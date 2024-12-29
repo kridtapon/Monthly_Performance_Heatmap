@@ -30,7 +30,7 @@ def plot_heatmap(symbol, start_date, end_date):
         st.error(f"Could not retrieve data for symbol: {symbol}. Please check the symbol and try again.")
         return
 
-    # Display data preview
+    # Display data previews
     st.write(f"### Data Preview for {symbol}:")
     st.dataframe(asset_data.tail())  # Display the first few rows of data for inspection
 
