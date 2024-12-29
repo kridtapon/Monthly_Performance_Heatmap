@@ -30,9 +30,9 @@ def plot_heatmap(symbol, start_date, end_date):
         st.error(f"Could not retrieve data for symbol: {symbol}. Please check the symbol and try again.")
         return
 
-    # Display data previews
+    # Display data preview
     st.write(f"### Data Preview for {symbol}:")
-    st.dataframe(asset_data.tail())  # Display the first few rows of data for inspection
+    st.dataframe(asset_data.tail())  # Display the last few rows of data
 
     # Calculate monthly returns
     asset_data['Monthly Return'] = asset_data['Close'].pct_change()
@@ -44,13 +44,16 @@ def plot_heatmap(symbol, start_date, end_date):
     # Group by Year and Month to get average monthly returns for each year
     monthly_returns = asset_data.groupby(['Year', 'Month'])['Monthly Return'].mean().unstack()
 
+    # Handle missing values by replacing NaN with 0
+    monthly_returns = monthly_returns.fillna(0)
+
     # Plotting the heatmap
     st.write(f"### Heatmap of Monthly Returns for {symbol}")
-    plt.figure(figsize=(12, 6))
-    sns.heatmap(monthly_returns, annot=True, cmap='RdYlGn', fmt='.2%', cbar=True, linewidths=0.5)
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.heatmap(monthly_returns, annot=True, cmap='RdYlGn', fmt='.2%', cbar=True, linewidths=0.5, ax=ax)
 
     # Show the plot in Streamlit
-    st.pyplot(plt)
+    st.pyplot(fig)
 
 # Display a default example heatmap when the app loads
 example_symbol = "BTC-USD"
@@ -63,6 +66,7 @@ plot_heatmap(example_symbol, example_start_date, example_end_date)
 # Button to update chart based on user input
 if st.sidebar.button("Update Chart"):
     plot_heatmap(symbol, start_date, end_date)
+
 
 
 
